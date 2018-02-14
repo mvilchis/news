@@ -41,7 +41,7 @@ def view_send_news(urn, section):
 
 @app.route("/location", methods=['POST', 'GET'])
 @use_kwargs(location_args)
-def view_send_news(urn, text):
+def view_send_location(urn, text):
     create_thread_location(section, text)
     return jsonify({"ok":"ok"})
 
