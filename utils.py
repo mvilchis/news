@@ -1,6 +1,7 @@
 import json
 import re
 from datetime import datetime
+import requests
 
 import redis
 import requests
@@ -77,3 +78,26 @@ def send_news(news_section="nacional", recipient_id = "1793673450643455"):
                                   item["subtitle"])
         news.append(template)
     page.send(recipient_id, Template.Generic(news))
+
+def send_location(recipient_id, text):
+    payload = {}
+    payload["recipient"] = {"id": recipient_id}
+    payload["message"] = {
+        "text": text,
+        "quick_replies": [{
+            "content_type": "location"
+        },{
+             "content_type":"text",
+             "title":"No",
+             "payload": "No"
+        }
+        ]
+    }
+    r = requests.post(
+        FACEBOOK_URL,
+        params={"access_token": FACEBOOK_TOKEN},
+        data=json.dumps(payload),
+        headers={
+            'Content-type': 'application/json'
+        })
+

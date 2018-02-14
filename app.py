@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from threading import Thread
 
 from utils import *
 from webargs import fields
@@ -13,6 +14,20 @@ news_args = {
     'section': fields.String(required=True)
 }
 
+location_args = {
+    'urn': fields.String(required=True),
+    'text': fields.String(required=True)
+}
+
+def create_thread_news(urn, text):
+    thread = Thread(target = send_news, args=(urn,text))
+    thread.start()
+    return
+
+def create_thread_location(urn, text):
+    thread = Thread(target = send_location, args=(urn,text))
+    thread.start()
+    return
 
 #############################################################
 #                      Endpoints                            #
@@ -20,7 +35,14 @@ news_args = {
 @app.route("/send_news", methods=['POST', 'GET'])
 @use_kwargs(news_args)
 def view_send_news(urn, section):
-    send_news(section, urn)
+    create_thread_news(section, urn)
+    return jsonify({"ok":"ok"})
+
+
+@app.route("/location", methods=['POST', 'GET'])
+@use_kwargs(location_args)
+def view_send_news(urn, text):
+    create_thread_location(section, text)
     return jsonify({"ok":"ok"})
 
 if __name__ == "__main__":
